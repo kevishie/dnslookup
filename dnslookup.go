@@ -81,9 +81,7 @@ func DefaultServerList() map[string]string {
 func CustomServerList() map[string]string {
 
 	result := make(map[string]string)
-	usr, err := user.Current()
-	checkError(err)
-
+	usr, _ := user.Current()
 	filename := usr.HomeDir + "/.resolv.conf"
 
 	if filename != "" {
@@ -106,10 +104,4 @@ func CustomServerList() map[string]string {
 	}
 
 	return result
-}
-
-func checkError(err error) {
-	if err != nil {
-		panic(err)
-	}
 }
