@@ -6,6 +6,7 @@ import (
 	"net"
 	"os"
 	"os/user"
+	"sort"
 	"strings"
 
 	"github.com/miekg/dns"
@@ -21,9 +22,19 @@ func main() {
 			dnsServers = DefaultServerList()
 		}
 
-		for alias, address := range dnsServers {
-			result := Lookup(target, address)
-			fmt.Printf("%v ==> %v\n", alias, result)
+		keys := make([]string, len(dnsServers))
+
+		i := 0
+		for k := range dnsServers {
+			keys[i] = k
+			i++
+		}
+
+		sort.Strings(keys)
+
+		for i := range keys {
+			result := Lookup(target, dnsServers[keys[i]])
+			fmt.Printf("%v ==> %v\n", keys[i], result)
 		}
 
 	} else {
@@ -79,6 +90,7 @@ func CustomServerList() map[string]string {
 		if file, err := os.Open(filename); err == nil {
 
 			fmt.Println("Reading servers from", filename)
+			fmt.Println("")
 
 			defer file.Close()
 
